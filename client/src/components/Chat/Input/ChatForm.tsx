@@ -258,6 +258,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
               isTextAreaFocused ? "opacity-100 shadow-glow" : "opacity-0"
             )} />
             <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
+            {/* WIP */}
             <EditBadges
               isEditingChatBadges={isEditingBadges}
               handleCancelBadges={handleCancelBadges}
