@@ -23,8 +23,8 @@ const BookmarkNav = lazy(() => import('./Bookmarks/BookmarkNav'));
 const AccountSettings = lazy(() => import('./AccountSettings'));
 const AgentMarketplaceButton = lazy(() => import('./AgentMarketplaceButton'));
 
-const NAV_WIDTH_DESKTOP = '260px';
-const NAV_WIDTH_MOBILE = '320px';
+const NAV_WIDTH_DESKTOP = '280px';
+const NAV_WIDTH_MOBILE = '280px';
 
 const NavMask = memo(
   ({ navVisible, toggleNavVisible }: { navVisible: boolean; toggleNavVisible: () => void }) => (
@@ -196,8 +196,9 @@ const Nav = memo(
             <motion.div
               data-testid="nav"
               className={cn(
-                'nav active max-w-[320px] flex-shrink-0 overflow-x-hidden bg-surface-primary-alt',
-                'md:max-w-[260px]',
+                'nav active max-w-[280px] flex-shrink-0 overflow-x-hidden',
+                'bg-white dark:bg-gray-900 border-r border-slate-200 dark:border-gray-700',
+                'relative',
               )}
               initial={{ width: 0 }}
               animate={{ width: navWidth }}
@@ -205,12 +206,15 @@ const Nav = memo(
               transition={{ duration: 0.2 }}
               key="nav"
             >
-              <div className="h-full w-[320px] md:w-[260px]">
+              {/* Enterprise AI Gradient Border */}
+              <div className="absolute -right-[1px] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-enterprise-primary/30 to-transparent shadow-[0_0_8px_rgba(0,123,255,0.3)]" />
+              
+              <div className="h-full w-[280px]">
                 <div className="flex h-full flex-col">
                   <nav
                     id="chat-history-nav"
                     aria-label={localize('com_ui_chat_history')}
-                    className="flex h-full flex-col px-2 pb-3.5 md:px-3"
+                    className="flex h-full flex-col px-4 pb-4"
                   >
                     <div className="flex flex-1 flex-col" ref={outerContainerRef}>
                       <MemoNewChat

@@ -122,6 +122,17 @@ html {
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
   --switch-unchecked: 0 0% 58%;
+  
+  /* Enterprise AI Variables */
+  --enterprise-primary: #007bff;
+  --enterprise-primary-dark: #0056b3;
+  --enterprise-accent: #00bcd4;
+  --enterprise-sapphire: #0051ff;
+  --enterprise-sapphire-dark: #0030a0;
+  --enterprise-text-main: #263238;
+  --enterprise-text-muted: #607d8b;
+  --enterprise-surface-light: #f8faff;
+  --enterprise-surface-highlight: #e6f0ff;
 }
 .dark {
   --brand-purple: #ab68ff;
@@ -310,7 +321,7 @@ html {
   font-family: Inter;
   font-style: normal;
   font-weight: 400;
-  src: url('$fonts/Inter-Regular.woff2') format('woff2');
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -319,7 +330,7 @@ html {
   font-family: Inter;
   font-style: italic;
   font-weight: 400;
-  src: url('$fonts/Inter-Italic.woff2') format('woff2');
+  src: url('/fonts/Inter-Italic.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -328,7 +339,7 @@ html {
   font-family: Inter;
   font-style: normal;
   font-weight: 500;
-  src: url('$fonts/Inter-SemiBold.woff2') format('woff2');
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -337,7 +348,7 @@ html {
   font-family: Inter;
   font-style: italic;
   font-weight: 500;
-  src: url('$fonts/Inter-SemiBoldItalic.woff2') format('woff2');
+  src: url('/fonts/Inter-SemiBoldItalic.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -346,7 +357,7 @@ html {
   font-family: Inter;
   font-style: normal;
   font-weight: 600;
-  src: url('$fonts/Inter-Bold.woff2') format('woff2');
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -355,7 +366,7 @@ html {
   font-family: Inter;
   font-style: italic;
   font-weight: 600;
-  src: url('$fonts/Inter-BoldItalic.woff2') format('woff2');
+  src: url('/fonts/Inter-BoldItalic.woff2') format('woff2');
   size-adjust: 94%;
 }
 
@@ -364,7 +375,7 @@ html {
   font-family: Roboto Mono;
   font-style: normal;
   font-weight: 400;
-  src: url('$fonts/roboto-mono-latin-400-normal.woff2') format('woff2');
+  src: url('/fonts/roboto-mono-latin-400-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -372,7 +383,7 @@ html {
   font-family: Roboto Mono;
   font-style: normal;
   font-weight: 700;
-  src: url('$fonts/roboto-mono-latin-700-normal.woff2') format('woff2');
+  src: url('/fonts/roboto-mono-latin-700-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -380,7 +391,7 @@ html {
   font-family: Roboto Mono;
   font-style: italic;
   font-weight: 400;
-  src: url('$fonts/roboto-mono-latin-400-italic.woff2') format('woff2');
+  src: url('/fonts/roboto-mono-latin-400-italic.woff2') format('woff2');
 }
 
 /*
@@ -416,7 +427,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: normal;
   font-weight: 400;
-  src: url("$fonts/soehne-buch.woff2") format("woff2")
+  src: url("/fonts/soehne-buch.woff2") format("woff2")
 }
 
 @font-face {
@@ -424,7 +435,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: italic;
   font-weight: 400;
-  src: url("$fonts/soehne-buch-kursiv.woff2") format("woff2")
+  src: url("/fonts/soehne-buch-kursiv.woff2") format("woff2")
 }
 
 @font-face {
@@ -432,7 +443,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: normal;
   font-weight: 500;
-  src: url("$fonts/soehne-kraftig.woff2") format("woff2")
+  src: url("/fonts/soehne-kraftig.woff2") format("woff2")
 }
 
 @font-face {
@@ -440,7 +451,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: italic;
   font-weight: 500;
-  src: url("$fonts/soehne-kraftig-kursiv.woff2") format("woff2")
+  src: url("/fonts/soehne-kraftig-kursiv.woff2") format("woff2")
 }
 
 @font-face {
@@ -448,7 +459,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: normal;
   font-weight: 600;
-  src: url("$fonts/soehne-halbfett.woff2") format("woff2")
+  src: url("/fonts/soehne-halbfett.woff2") format("woff2")
 }
 
 @font-face {
@@ -456,7 +467,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne;
   font-style: italic;
   font-weight: 600;
-  src: url("$fonts/soehne-halbfett-kursiv.woff2") format("woff2")
+  src: url("/fonts/soehne-halbfett-kursiv.woff2") format("woff2")
 }
 
 @font-face {
@@ -464,7 +475,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne Mono;
   font-style: normal;
   font-weight: 400;
-  src: url("$fonts/soehne-mono-buch.woff2") format("woff2")
+  src: url("/fonts/soehne-mono-buch.woff2") format("woff2")
 }
 
 @font-face {
@@ -472,7 +483,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne Mono;
   font-style: normal;
   font-weight: 700;
-  src: url("$fonts/soehne-mono-halbfett.woff2") format("woff2")
+  src: url("/fonts/soehne-mono-halbfett.woff2") format("woff2")
 }
 
 @font-face {
@@ -480,7 +491,7 @@ Step 5: rebuild frontend code: `npm run frontend` (or rebuild docker).
   font-family: Söhne Mono;
   font-style: italic;
   font-weight: 400;
-  src: url("$fonts/soehne-mono-buch-kursiv.woff2") format("woff2")
+  src: url("/fonts/soehne-mono-buch-kursiv.woff2") format("woff2")
 } */
 
 /* * {
@@ -2835,4 +2846,232 @@ html {
 
 .sharepoint-picker-bg{
   background-color: #F5F5F5;
+}
+
+/* =========================== */
+/* Enterprise AI Custom Styles */
+/* =========================== */
+
+/* Enhanced Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 123, 255, 0.2);
+  border: 1px solid rgba(0, 123, 255, 0.05);
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.1);
+  border-radius: 99px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 123, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(0, 81, 255, 0.3);
+  border: 1px solid rgba(64, 201, 255, 0.1);
+  box-shadow: 0 0 8px rgba(0, 81, 255, 0.3);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(2, 4, 10, 0.5);
+}
+
+/* Grid Background Pattern */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 123, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 123, 255, 0.05) 1px, transparent 1px);
+}
+
+.dark .bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(0, 81, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 81, 255, 0.1) 1px, transparent 1px);
+}
+
+/* Glow Effects Animation */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+  }
+}
+
+.glow-animation {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Enterprise Button Styles */
+.enterprise-btn {
+  @apply relative overflow-hidden transition-all duration-300;
+  background-image: linear-gradient(135deg, var(--enterprise-primary) 0%, var(--enterprise-accent) 100%);
+}
+
+.enterprise-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+}
+
+.enterprise-btn:active {
+  transform: translateY(0);
+}
+
+/* Enterprise Card Styles */
+.enterprise-card {
+  @apply relative overflow-hidden;
+  background: var(--enterprise-surface-light);
+  border: 1px solid rgba(0, 123, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.enterprise-card:hover {
+  border-color: rgba(0, 123, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 123, 255, 0.2);
+}
+
+.dark .enterprise-card {
+  background: rgba(5, 11, 26, 0.8);
+  border-color: rgba(0, 81, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark .enterprise-card:hover {
+  border-color: rgba(0, 81, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 81, 255, 0.3);
+}
+
+/* Enterprise Message Bubble */
+.enterprise-message {
+  @apply relative;
+  border-left: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.enterprise-message-ai {
+  border-left-color: var(--enterprise-primary);
+  background: linear-gradient(to right, rgba(0, 123, 255, 0.05), transparent);
+}
+
+.enterprise-message-ai::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--enterprise-primary), var(--enterprise-accent));
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+}
+
+/* Enterprise Input Styles */
+.enterprise-input {
+  @apply relative;
+  background: rgba(248, 250, 255, 0.9);
+  border: 1px solid rgba(0, 123, 255, 0.2);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+}
+
+.enterprise-input:focus-within {
+  border-color: rgba(0, 123, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 123, 255, 0.2);
+}
+
+.enterprise-input::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--enterprise-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.enterprise-input:focus-within::before {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+}
+
+/* Pulse Animation for Status Indicators */
+@keyframes enterprise-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.enterprise-pulse {
+  animation: enterprise-pulse 2s ease-in-out infinite;
+}
+
+/* Gradient Borders */
+.enterprise-gradient-border {
+  position: relative;
+  background: var(--enterprise-surface-light);
+  border-radius: 1rem;
+}
+
+.enterprise-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--enterprise-primary), var(--enterprise-accent));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.2;
+  transition: opacity 0.3s ease;
+}
+
+.enterprise-gradient-border:hover::before {
+  opacity: 0.4;
+}
+
+/* Tech Font for Headers */
+.font-tech-mono {
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* Radial Gradient Background */
+.enterprise-radial-bg {
+  background-image: radial-gradient(ellipse at top, rgba(0, 123, 255, 0.1) 0%, transparent 50%);
+}
+
+/* Status Badge Animations */
+.status-dot {
+  @apply relative inline-flex h-3 w-3;
+}
+
+.status-dot::before {
+  content: '';
+  @apply absolute inline-flex h-full w-full rounded-full bg-enterprise-primary opacity-75;
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.status-dot::after {
+  content: '';
+  @apply relative inline-flex rounded-full h-3 w-3 bg-enterprise-primary;
+  box-shadow: 0 0 10px var(--enterprise-primary);
 }

@@ -132,8 +132,10 @@ export default function Conversation({ conversation, retainView, toggleNav }: Co
   return (
     <div
       className={cn(
-        'group relative flex h-12 w-full items-center rounded-lg transition-colors duration-200 md:h-9',
-        isActiveConvo ? 'bg-surface-active-alt' : 'hover:bg-surface-active-alt',
+        'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
+        isActiveConvo 
+          ? 'bg-enterprise-primary/10 border border-enterprise-primary/20 text-enterprise-primary shadow-glow-sm' 
+          : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100',
       )}
       role="button"
       tabIndex={renaming ? -1 : 0}
@@ -174,20 +176,25 @@ export default function Conversation({ conversation, retainView, toggleNav }: Co
           isSmallScreen={isSmallScreen}
           localize={localize}
         >
-          <EndpointIcon
-            conversation={conversation}
-            endpointsConfig={endpointsConfig}
-            size={20}
-            context="menu-item"
-          />
+          <span className={cn(
+            "material-symbols-outlined text-[20px] transition-colors",
+            isActiveConvo ? "text-enterprise-primary drop-shadow-[0_0_5px_rgba(0,123,255,0.3)]" : "group-hover:text-enterprise-primary"
+          )}>
+            {conversation.endpoint === 'gptPlugins' ? 'extension' :
+             conversation.endpoint === 'azureOpenAI' ? 'cloud' :
+             conversation.endpoint === 'google' ? 'language' :
+             conversation.endpoint === 'anthropic' ? 'psychology' :
+             conversation.agent_id ? 'support_agent' :
+             'chat_bubble'}
+          </span>
         </ConvoLink>
       )}
       <div
         className={cn(
-          'mr-2 flex origin-left',
+          'ml-auto flex origin-right transition-all duration-200',
           isPopoverActive || isActiveConvo
-            ? 'pointer-events-auto max-w-[28px] scale-x-100 opacity-100'
-            : 'pointer-events-none max-w-0 scale-x-0 opacity-0 group-focus-within:pointer-events-auto group-focus-within:max-w-[28px] group-focus-within:scale-x-100 group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:max-w-[28px] group-hover:scale-x-100 group-hover:opacity-100',
+            ? 'pointer-events-auto opacity-100 translate-x-0'
+            : 'pointer-events-none opacity-0 translate-x-2 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-x-0 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-x-0',
         )}
         aria-hidden={!(isPopoverActive || isActiveConvo)}
       >

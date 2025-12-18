@@ -27,6 +27,19 @@ services:
       - ./images:/app/client/public/images
       - ./uploads:/app/uploads
       - ./logs:/app/logs
+      # MCP設定ファイルをコンテナに渡す
+      - type: bind
+        source: ./librechat.yaml
+        target: /app/librechat.yaml
+
+      # BigQuery のサービスアカウントキーを渡す
+      - type: bind
+        source: ./gcp-bq-key.json
+        target: /secrets/gcp-bq-key.json
+
+      # npx / npm のグローバルインストールを永続化（任意だが推奨）
+      - npm_global:/usr/local/lib/node_modules
+
   mongodb:
     container_name: chat-mongodb
     image: mongo
@@ -67,6 +80,8 @@ services:
       - vectordb
     env_file:
       - .env
+  
 
 volumes:
   pgdata2:
+  npm_global:

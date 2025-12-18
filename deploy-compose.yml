@@ -31,6 +31,17 @@ services:
       - ./uploads:/app/uploads
       - ./logs:/app/api/logs
 
+      - type: bind
+        source: ./mcp/gdrive-mcp-server
+        target: /app/gdrive-mcp-server
+        read_only: true
+
+      - type: bind
+        source: ./mcp/gdrive-mcp-server/credentials
+        target: /app/mcp-credentials
+        read_only: true
+
+
   client:
     image: nginx:1.27.0-alpine
     container_name: LibreChat-NGINX

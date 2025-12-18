@@ -208,14 +208,14 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
     <form
       onSubmit={methods.handleSubmit(submitMessage)}
       className={cn(
-        'mx-auto flex w-full flex-row gap-3 transition-[max-width] duration-300 sm:px-2',
-        maximizeChatSpace ? 'max-w-full' : 'md:max-w-3xl xl:max-w-4xl',
+        'mx-auto flex w-full flex-row gap-3 transition-[max-width] duration-300',
+        maximizeChatSpace ? 'max-w-full px-6' : 'max-w-4xl px-6',
         centerFormOnLanding &&
           (conversationId == null || conversationId === Constants.NEW_CONVO) &&
           !isSubmitting &&
           conversation?.messages?.length === 0
-          ? 'transition-all duration-200 sm:mb-28'
-          : 'sm:mb-10',
+          ? 'transition-all duration-200 mb-32'
+          : 'mb-6',
       )}
     >
       <div className="relative flex h-full flex-1 items-stretch md:flex-col">
@@ -243,13 +243,20 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative flex w-full flex-grow flex-col overflow-hidden rounded-t-3xl border pb-4 text-text-primary transition-all duration-200 sm:rounded-3xl sm:pb-0',
-              isTextAreaFocused ? 'shadow-lg' : 'shadow-md',
+              'enterprise-input relative flex w-full flex-grow flex-col overflow-hidden rounded-2xl p-2 transition-all duration-300 group',
+              'bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl',
+              'shadow-xl ring-1 ring-enterprise-primary/20',
+              isTextAreaFocused ? 'ring-enterprise-primary/40 shadow-glow-strong' : '',
               isTemporary
-                ? 'border-violet-800/60 bg-violet-950/10'
-                : 'border-border-light bg-surface-chat',
+                ? 'bg-violet-950/10 ring-violet-800/60'
+                : '',
             )}
           >
+            {/* Enterprise AI Gradient Border Animation */}
+            <div className={cn(
+              "absolute -top-[1px] left-10 right-10 h-[1px] bg-gradient-to-r from-transparent via-enterprise-primary to-transparent transition-opacity duration-500",
+              isTextAreaFocused ? "opacity-100 shadow-glow" : "opacity-0"
+            )} />
             <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
             <EditBadges
               isEditingChatBadges={isEditingBadges}
@@ -314,13 +321,16 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
             )}
             <div
               className={cn(
-                '@container items-between flex gap-2 pb-2',
+                '@container flex items-end gap-2 px-2 pb-1 pt-2 border-t border-slate-100 dark:border-gray-700',
                 isRTL ? 'flex-row-reverse' : 'flex-row',
               )}
             >
-              <div className={`${isRTL ? 'mr-2' : 'ml-2'}`}>
+              <div className="flex items-center gap-4">
+                {/* Attach File Button */}
                 <AttachFileChat conversation={conversation} disableInputs={disableInputs} />
+              
               </div>
+              
               <BadgeRow
                 showEphemeralBadges={!isAgentsEndpoint(endpoint) && !isAssistantsEndpoint(endpoint)}
                 isSubmitting={isSubmitting || isSubmittingAdded}
@@ -330,17 +340,21 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                   Array.isArray(conversation?.messages) && conversation.messages.length >= 1
                 }
               />
+              
               <div className="mx-auto flex" />
-              {SpeechToText && (
-                <AudioRecorder
-                  methods={methods}
-                  ask={submitMessage}
-                  textAreaRef={textAreaRef}
-                  disabled={disableInputs || isNotAppendable}
-                  isSubmitting={isSubmitting}
-                />
-              )}
-              <div className={`${isRTL ? 'ml-2' : 'mr-2'}`}>
+              
+              {/* Audio and Send Controls */}
+              <div className="flex items-center gap-2">
+                {SpeechToText && (
+                  <AudioRecorder
+                    methods={methods}
+                    ask={submitMessage}
+                    textAreaRef={textAreaRef}
+                    disabled={disableInputs || isNotAppendable}
+                    isSubmitting={isSubmitting}
+                  />
+                )}
+                
                 {(isSubmitting || isSubmittingAdded) && (showStopButton || showStopAdded) ? (
                   <StopButton stop={handleStopGenerating} setShowStopButton={setShowStopButton} />
                 ) : (

@@ -13,6 +13,10 @@ module.exports = {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
       mono: ['Roboto Mono', 'monospace'],
+      // Enterprise AI fonts
+      display: ['Spline Sans', 'sans-serif'],
+      tech: ['Orbitron', 'sans-serif'],
+      body: ['Noto Sans', 'sans-serif'],
     },
     // fontFamily: {
     //   sans: ['Söhne', 'sans-serif'],
@@ -47,6 +51,16 @@ module.exports = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(100%)' },
         },
+        'ping': {
+          '0%, 100%': { 
+            transform: 'scale(1)', 
+            opacity: '1' 
+          },
+          '50%': { 
+            transform: 'scale(1.5)', 
+            opacity: '0' 
+          },
+        },
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out forwards',
@@ -56,8 +70,17 @@ module.exports = {
         'slide-in-left': 'slide-in-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1)',
         'slide-out-left': 'slide-out-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1)',
         'slide-out-right': 'slide-out-right 300ms cubic-bezier(0.25, 0.1, 0.25, 1)',
+        'ping': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
       colors: {
+        // Enterprise AI color system
+        'enterprise': {
+          primary: '#007bff',
+          'primary-dark': '#0056b3',
+          accent: '#00bcd4',
+          sapphire: '#0051ff',
+          'sapphire-dark': '#0030a0',
+        },
         gray: {
           20: '#ececf1',
           50: '#f7f7f8',
@@ -154,6 +177,23 @@ module.exports = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        // Enterprise AI radius values
+        DEFAULT: '0.75rem',
+        xl: '1rem',
+        '2xl': '1.5rem',
+        full: '9999px',
+      },
+      boxShadow: {
+        'glow': '0 0 10px rgba(0, 123, 255, 0.2)',
+        'glow-strong': '0 0 20px rgba(0, 123, 255, 0.4)',
+        'glow-sm': '0 0 5px rgba(0, 123, 255, 0.15)',
+        'sapphire-glow': '0 0 25px rgba(0, 81, 255, 0.25)',
+        'sapphire-glow-sm': '0 0 10px rgba(0, 81, 255, 0.15)',
+        'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+      },
+      backgroundImage: {
+        'cyber-gradient': 'linear-gradient(135deg, #007bff 0%, #00bcd4 100%)',
+        'deep-gradient': 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)',
       },
     },
   },
