@@ -1,0 +1,201 @@
+# =============================================================================
+# Scentier AI Platform - LibreChat Configuration for Cloud Run
+# =============================================================================
+# This configuration is optimized for Cloud Run deployment as internal SaaS.
+# Copy to librechat.yaml in the project root or mount as a secret.
+# =============================================================================
+
+version: 1.2.1
+
+# Enable caching (recommended for performance)
+cache: true
+
+# File storage strategy
+# Options: local, firebase, s3, azure, gcs
+# For Cloud Run, use cloud storage (local storage is ephemeral)
+fileStrategy: "gcs"  # Or "s3" if using S3-compatible storage
+
+# File configuration
+fileConfig:
+  endpoints:
+    default:
+      fileLimit: 25
+      fileSizeLimit: 50  # MB
+      totalSizeLimit: 500  # MB
+      supportedMimeTypes:
+        - "image/*"
+        - "application/pdf"
+        - "text/plain"
+        - "text/markdown"
+        - "application/json"
+        - "text/csv"
+
+# Registration settings for internal SaaS
+registration:
+  # Disable public registration
+  allowedDomains:
+    - "your-company.com"  # Only allow company email domains
+
+  # Social login providers
+  socialLogins:
+    - google
+
+# Rate limiting (adjust based on your needs)
+rateLimits:
+  fileUploads:
+    ipMax: 100
+    ipWindowInMinutes: 60
+    userMax: 50
+    userWindowInMinutes: 60
+  conversationsImport:
+    ipMax: 100
+    ipWindowInMinutes: 60
+    userMax: 50
+    userWindowInMinutes: 60
+
+# Model specifications
+modelSpecs:
+  enforce: false  # Set to true to restrict models
+  prioritize: true
+  list:
+    # OpenAI Models
+    - name: "gpt-4o"
+      label: "GPT-4o"
+      description: "Latest GPT-4o model"
+      default: true
+
+    - name: "gpt-4o-mini"
+      label: "GPT-4o Mini"
+      description: "Fast and cost-effective"
+
+    # Anthropic Models
+    - name: "claude-sonnet-4-20250514"
+      label: "Claude Sonnet 4"
+      description: "Latest Claude Sonnet"
+
+    - name: "claude-3-5-haiku-20241022"
+      label: "Claude 3.5 Haiku"
+      description: "Fast and efficient"
+
+    # Google Models
+    - name: "gemini-2.0-flash"
+      label: "Gemini 2.0 Flash"
+      description: "Google's fast model"
+
+# UI customization
+interface:
+  # Custom landing page
+  customWelcome: "Scentier AI Platformへようこそ"
+
+  # Privacy policy link (internal)
+  privacyPolicy:
+    externalUrl: "https://your-internal-docs.com/privacy"
+
+  # Terms of service (internal)
+  termsOfService:
+    externalUrl: "https://your-internal-docs.com/terms"
+
+  # Parameters that users can adjust
+  parameters:
+    temperature:
+      default: 0.7
+      min: 0
+      max: 2
+
+  # Endpoint icon customization
+  endpointMenu:
+    # Show/hide endpoints
+    openAI: true
+    anthropic: true
+    google: true
+    assistants: true
+    agents: true
+
+# Endpoint configurations
+endpoints:
+  # Custom instructions for all endpoints
+  all:
+    # System message to prepend (optional)
+    # modelDisplayLabel: "Scentier AI"
+
+  # OpenAI configuration
+  openAI:
+    # Use user-provided API keys
+    userProvide: true
+    userProvideURL: false
+
+    # Models to show (uncomment to restrict)
+    # models:
+    #   default: ["gpt-4o", "gpt-4o-mini"]
+
+    # Title generation model
+    titleModel: "gpt-4o-mini"
+
+    # Summarization settings
+    summarize: true
+    summaryModel: "gpt-4o-mini"
+
+  # Anthropic configuration
+  anthropic:
+    userProvide: true
+
+  # Google AI configuration
+  google:
+    userProvide: true
+
+  # Assistants API
+  assistants:
+    # Disable if not using OpenAI Assistants
+    disableBuilder: false
+    # Allow users to provide their own API key
+    userProvide: true
+
+  # Agents (LibreChat built-in agents)
+  agents:
+    disableBuilder: false
+    # Capabilities
+    capabilities:
+      - "web_search"
+      - "code_interpreter"
+
+# Web search configuration (optional)
+# webSearch:
+#   provider: "serper"  # or "google", "bing", etc.
+#   results: 5
+#   rerank: true
+#   rerankProvider: "jina"
+
+# Code execution (optional - requires LibreChat Code API)
+# codeExecution:
+#   timeout: 30000
+#   allowedLanguages:
+#     - python
+#     - javascript
+#     - typescript
+
+# Speech settings (optional)
+speech:
+  tts:
+    # Text-to-speech provider
+    # openai, azure, elevenlabs, localai
+    provider: "openai"
+    voices:
+      - "alloy"
+      - "echo"
+      - "fable"
+      - "onyx"
+      - "nova"
+      - "shimmer"
+
+  stt:
+    # Speech-to-text provider
+    provider: "openai"
+
+# Actions/Plugins (optional)
+actions:
+  # Disable actions if not needed
+  # disableBuilder: true
+
+  # Allowed action domains
+  # allowedDomains:
+  #   - "api.your-company.com"
