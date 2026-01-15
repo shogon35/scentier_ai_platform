@@ -30,12 +30,17 @@ function startMcpProcess() {
 
   console.log('Starting BigQuery MCP server...');
 
-  mcpProcess = spawn('npx', ['-y', '@ergut/mcp-bigquery-server'], {
-    env: {
-      ...process.env,
-      BQ_PROJECT_ID,
-      BQ_LOCATION
-    },
+  const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS || '/secrets/gcp-bq-key.json';
+  console.log(`Using key file: ${keyFile}`);
+
+  mcpProcess = spawn('npx', [
+    '-y',
+    '@ergut/mcp-bigquery-server',
+    '--project-id', BQ_PROJECT_ID,
+    '--location', BQ_LOCATION,
+    '--key-file', keyFile
+  ], {
+    env: process.env,
     stdio: ['pipe', 'pipe', 'pipe']
   });
 
