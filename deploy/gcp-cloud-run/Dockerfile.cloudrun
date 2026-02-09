@@ -70,6 +70,7 @@ COPY --from=builder --chown=node:node /app/api ./api
 COPY --from=builder --chown=node:node /app/client/dist ./client/dist
 COPY --from=builder --chown=node:node /app/packages ./packages
 COPY --from=builder --chown=node:node /app/config ./config
+COPY --from=builder --chown=node:node /app/librechat.yaml ./librechat.yaml
 
 # Create necessary directories (Cloud Run uses in-memory storage)
 RUN mkdir -p /app/client/public/images /app/logs /app/uploads && \
