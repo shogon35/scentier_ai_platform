@@ -103,19 +103,21 @@ RUN node -e ' \
   } \
 '
 
-# Part B: Add fallback logic in initializeServer catch block
+# Part B: Add fallback registration after Promise.allSettled in initialize()
+# When withTimeout fires, the catch inside initializeServer never runs,
+# so we register failed servers AFTER allSettled completes.
 RUN node -e ' \
   const fs = require("fs"); \
   const f = "/app/packages/api/dist/index.js"; \
   let c = fs.readFileSync(f, "utf8"); \
-  const orig = "catch (error) {\n                dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to initialize:`, error);\n            }"; \
-  const repl = "catch (error) {\n                dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to initialize:`, error);\n                try {\n                    yield MCPServersRegistry.getInstance().addServerWithoutInspection(serverName, rawConfig);\n                    dataSchemas.logger.info(`${MCPServersInitializer.prefix(serverName)} Registered as disconnected (no inspection).`);\n                }\n                catch (fallbackError) {\n                    dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to register fallback config:`, fallbackError);\n                }\n            }"; \
+  const orig = "yield Promise.allSettled(serverNames.map((serverName) => withTimeout(MCPServersInitializer.initializeServer(serverName, rawConfigs[serverName]), MCP_INIT_TIMEOUT_MS, `${MCPServersInitializer.prefix(serverName)} Server initialization timed out`, dataSchemas.logger.error)));\n                yield registryStatusCache.setInitialized(true);"; \
+  const repl = "const results = yield Promise.allSettled(serverNames.map((serverName) => withTimeout(MCPServersInitializer.initializeServer(serverName, rawConfigs[serverName]), MCP_INIT_TIMEOUT_MS, `${MCPServersInitializer.prefix(serverName)} Server initialization timed out`, dataSchemas.logger.error)));\n                for (let i = 0; i < serverNames.length; i++) {\n                    if (results[i].status === \"rejected\") {\n                        try {\n                            yield MCPServersRegistry.getInstance().addServerWithoutInspection(serverNames[i], rawConfigs[serverNames[i]]);\n                            dataSchemas.logger.info(`${MCPServersInitializer.prefix(serverNames[i])} Registered as disconnected (fallback after timeout).`);\n                        } catch (e) {\n                            dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverNames[i])} Fallback registration failed:`, e);\n                        }\n                    }\n                }\n                yield registryStatusCache.setInitialized(true);"; \
   if (c.includes(orig)) { \
     c = c.replace(orig, repl); \
     fs.writeFileSync(f, c); \
-    console.log("Patched: initializeServer fallback added"); \
+    console.log("Patched: initialize() fallback after allSettled"); \
   } else { \
-    console.log("Skipped: initializeServer fallback (already patched or pattern not found)"); \
+    console.log("Skipped: initialize() fallback (pattern not found)"); \
   } \
 '
 
