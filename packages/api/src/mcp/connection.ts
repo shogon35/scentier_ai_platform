@@ -169,7 +169,7 @@ export class MCPConnection extends EventEmitter {
       const requestHeaders = getHeaders();
       const effectiveTimeout = timeout || DEFAULT_TIMEOUT;
       const agent = new Agent({
-        bodyTimeout: effectiveTimeout,
+        bodyTimeout: 0,
         headersTimeout: effectiveTimeout,
       });
       if (!requestHeaders) {

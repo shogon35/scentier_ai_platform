@@ -140,6 +140,26 @@ RUN node -e ' \
   } \
 '
 
+# Patch 5: MCP SSE bodyTimeout fix - prevent undici from killing SSE streams
+# undici's bodyTimeout aborts responses whose body isn't fully received within
+# the timeout. SSE streams are open-ended by design, so bodyTimeout kills them.
+# Fix: set bodyTimeout to 0 (unlimited). headersTimeout still protects against
+# unresponsive servers, and MCP SDK's own 180s tool call timeout is the backstop.
+RUN node -e ' \
+  const fs = require("fs"); \
+  const f = "/app/packages/api/dist/index.js"; \
+  let c = fs.readFileSync(f, "utf8"); \
+  const orig = "bodyTimeout: effectiveTimeout, headersTimeout: effectiveTimeout"; \
+  const repl = "bodyTimeout: 0, headersTimeout: effectiveTimeout"; \
+  if (c.includes(orig)) { \
+    c = c.replace(orig, repl); \
+    fs.writeFileSync(f, c); \
+    console.log("Patched: bodyTimeout set to 0 for SSE compatibility"); \
+  } else { \
+    console.log("Skipped: bodyTimeout pattern not found"); \
+  } \
+'
+
 # =============================================================================
 # Directory Setup (Cloud Run uses in-memory storage)
 # =============================================================================
