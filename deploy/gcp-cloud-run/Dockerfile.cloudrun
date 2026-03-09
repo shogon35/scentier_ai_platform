@@ -2,7 +2,7 @@
 # Based on official LibreChat dev image for UI consistency with local environment
 # Patches applied to compiled/built files (no source rebuild needed)
 
-FROM ghcr.io/danny-avila/librechat-dev:latest
+FROM ghcr.io/danny-avila/librechat-dev@sha256:b5bce4fe3ffa872ce2e20ed0249992ad31bd5d553d7f223fca0445ab001b0a9a
 
 USER root
 
@@ -118,6 +118,25 @@ RUN node -e ' \
     console.log("Patched: initialize() fallback after allSettled"); \
   } else { \
     console.log("Skipped: initialize() fallback (pattern not found)"); \
+  } \
+'
+
+# Patch 4: MCP server reconnection - upsert on addServer to handle fallback-registered servers
+# After Patch 3 registers timed-out servers as disconnected, reconnect attempts call
+# addServer -> configRepo.add() which throws "already exists in cache".
+# Fix: wrap configRepo.add() in a try/catch that falls back to configRepo.update().
+RUN node -e ' \
+  const fs = require("fs"); \
+  const f = "/app/packages/api/dist/index.js"; \
+  let c = fs.readFileSync(f, "utf8"); \
+  const orig = "return yield configRepo.add(serverName, parsedConfig, userId);"; \
+  const repl = "try { return yield configRepo.add(serverName, parsedConfig, userId); } catch (addErr) { if (addErr.message && addErr.message.includes(\"already exists\")) { yield configRepo.update(serverName, parsedConfig, userId); return { serverName, config: parsedConfig }; } throw addErr; }"; \
+  if (c.includes(orig)) { \
+    c = c.replace(orig, repl); \
+    fs.writeFileSync(f, c); \
+    console.log("Patched: addServer upsert (add-or-update) for reconnection"); \
+  } else { \
+    console.log("Skipped: addServer upsert (pattern not found)"); \
   } \
 '
 
