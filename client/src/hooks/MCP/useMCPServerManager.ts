@@ -592,6 +592,12 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
         setIsConfigModalOpen(true);
       };
 
+      const handleReconnectClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        initializeServer(serverName);
+      };
+
       const handleCancelClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
@@ -613,13 +619,14 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
             } as TPlugin)
           : undefined,
         onConfigClick: handleConfigClick,
+        onReconnect: handleReconnectClick,
         isInitializing: isInitializing(serverName),
         canCancel: isCancellable(serverName),
         onCancel: handleCancelClick,
         hasCustomUserVars,
       };
     },
-    [queryClient, isCancellable, isInitializing, cancelOAuthFlow, connectionStatus, loadedServers],
+    [queryClient, isCancellable, isInitializing, initializeServer, cancelOAuthFlow, connectionStatus, loadedServers],
   );
 
   const getConfigDialogProps = useCallback(() => {

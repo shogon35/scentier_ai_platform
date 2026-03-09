@@ -71,6 +71,19 @@ export class MCPServersRegistry {
     };
   }
 
+  /**
+   * Adds a server to the cache without inspecting (connecting to) it.
+   * Used as a fallback when a server is unreachable at startup,
+   * so it still appears in the UI as disconnected.
+   */
+  public async addServerWithoutInspection(
+    serverName: string,
+    rawConfig: t.MCPOptions,
+  ): Promise<void> {
+    const minimalConfig: t.ParsedServerConfig = { ...rawConfig };
+    await this.cacheConfigsRepo.add(serverName, minimalConfig);
+  }
+
   public async addServer(
     serverName: string,
     config: t.MCPOptions,

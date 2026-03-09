@@ -80,6 +80,19 @@ export class MCPServersInitializer {
       MCPServersInitializer.logParsedConfig(serverName, result.config);
     } catch (error) {
       logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to initialize:`, error);
+      // Register with raw config so the server still appears in the UI as disconnected,
+      // allowing users to manually trigger reconnection.
+      try {
+        await MCPServersRegistry.getInstance().addServerWithoutInspection(serverName, rawConfig);
+        logger.info(
+          `${MCPServersInitializer.prefix(serverName)} Registered as disconnected (no inspection).`,
+        );
+      } catch (fallbackError) {
+        logger.error(
+          `${MCPServersInitializer.prefix(serverName)} Failed to register fallback config:`,
+          fallbackError,
+        );
+      }
     }
   }
 

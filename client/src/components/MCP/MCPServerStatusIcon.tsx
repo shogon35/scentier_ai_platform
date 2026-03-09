@@ -21,6 +21,7 @@ interface MCPServerStatusIconProps {
   serverStatus?: MCPServerStatus;
   tool?: TPlugin;
   onConfigClick: (e: React.MouseEvent) => void;
+  onReconnect: (e: React.MouseEvent) => void;
   isInitializing: boolean;
   canCancel: boolean;
   onCancel: (e: React.MouseEvent) => void;
@@ -35,6 +36,7 @@ export default function MCPServerStatusIcon({
   serverStatus,
   tool,
   onConfigClick,
+  onReconnect,
   isInitializing,
   canCancel,
   onCancel,
@@ -64,13 +66,13 @@ export default function MCPServerStatusIcon({
 
   if (connectionState === 'disconnected') {
     if (requiresOAuth) {
-      return <DisconnectedOAuthStatusIcon serverName={serverName} onConfigClick={onConfigClick} />;
+      return <DisconnectedOAuthStatusIcon serverName={serverName} onConfigClick={onReconnect} />;
     }
-    return <DisconnectedStatusIcon serverName={serverName} onConfigClick={onConfigClick} />;
+    return <DisconnectedStatusIcon serverName={serverName} onConfigClick={onReconnect} />;
   }
 
   if (connectionState === 'error') {
-    return <ErrorStatusIcon serverName={serverName} onConfigClick={onConfigClick} />;
+    return <ErrorStatusIcon serverName={serverName} onConfigClick={onReconnect} />;
   }
 
   if (connectionState === 'connected') {
