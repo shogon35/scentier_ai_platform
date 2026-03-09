@@ -1,111 +1,139 @@
-# Scentier AI Platform - Cloud Run Optimized Dockerfile
-# v0.8.2-rc1
+# Scentier AI Platform - Cloud Run Dockerfile
+# Based on official LibreChat dev image for UI consistency with local environment
+# Patches applied to compiled/built files (no source rebuild needed)
+
+FROM ghcr.io/danny-avila/librechat-dev:latest
+
+USER root
 
 # =============================================================================
-# Stage 1: Build Stage
+# Runtime Dependencies
 # =============================================================================
-FROM node:20-alpine AS builder
-
-# Install build dependencies
-RUN apk add --no-cache python3 py3-pip
-
-WORKDIR /app
-
-# Copy package files first for layer caching
-COPY package.json package-lock.json ./
-COPY api/package.json ./api/package.json
-COPY client/package.json ./client/package.json
-COPY packages/data-provider/package.json ./packages/data-provider/package.json
-COPY packages/data-schemas/package.json ./packages/data-schemas/package.json
-COPY packages/api/package.json ./packages/api/package.json
-
-# Configure npm for reliability
-RUN npm config set fetch-retry-maxtimeout 600000 && \
-    npm config set fetch-retries 5 && \
-    npm config set fetch-retry-mintimeout 15000
-
-# Install all dependencies
-RUN npm ci --no-audit
-
-# Copy source code
-COPY . .
-
-# Build frontend and packages
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm run frontend
-
-# Prune dev dependencies
-RUN npm prune --production && \
-    npm cache clean --force
+# tini: Proper init process for signal handling on Cloud Run
+# curl: Health check endpoint
+RUN apk add --no-cache tini curl
 
 # =============================================================================
-# Stage 2: Production Runtime
+# Cloud Run Configuration
 # =============================================================================
-FROM node:20-alpine AS runtime
+# Disable jemalloc: causes Undici HTTP client failure on Cloud Run (MCP connections)
+ENV LD_PRELOAD=
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=8080
+# Prefer IPv4 for DNS resolution (Cloud Run compatibility)
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+# Enable JSON logging for Cloud Logging integration
+ENV CONSOLE_JSON=true
 
-# Install runtime dependencies
-# - jemalloc: Memory optimization
-# - python3, uv: Required for MCP server support
-# - tini: Proper init process for containers
-RUN apk add --no-cache \
-    jemalloc \
-    python3 \
-    py3-pip \
-    tini \
-    curl
+# =============================================================================
+# Build-time Patches (applied to pre-compiled files)
+# =============================================================================
 
-# Add uv for extended MCP support
-COPY --from=ghcr.io/astral-sh/uv:0.9.5-python3.12-alpine /usr/local/bin/uv /usr/local/bin/uvx /bin/
+# Patch 1: MCP server title - Unicode support for Japanese display names
+# Default regex /^[a-zA-Z0-9 ]+$/ rejects non-ASCII characters in MCP server titles
+# Replace with Unicode-aware regex in compiled JS files
+RUN node -e ' \
+  const fs = require("fs"); \
+  const files = [ \
+    "/app/packages/data-provider/dist/index.js", \
+    "/app/packages/data-provider/dist/index.es.js" \
+  ]; \
+  files.forEach(f => { \
+    let c = fs.readFileSync(f, "utf8"); \
+    const orig = "/^[a-zA-Z0-9 ]+$/"; \
+    const repl = "/^[\\p{L}\\p{N} ]+$/u"; \
+    if (c.includes(orig)) { \
+      c = c.replace(orig, repl); \
+      fs.writeFileSync(f, c); \
+      console.log("Patched:", f); \
+    } else { \
+      console.log("Pattern not found (may already be patched):", f); \
+    } \
+  }); \
+'
 
-# jemalloc disabled: may interfere with Node.js Undici HTTP client (MCP connections)
-# ENV LD_PRELOAD=/usr/lib/libjemalloc.so.2
+# Patch 2: MCP UI Resource sandbox - allow-same-origin for uploaded image support
+# Without allow-same-origin, sandboxed iframes cannot send JWT cookies
+# to load uploaded images from LibreChat's authenticated /api/files endpoints
+RUN node -e ' \
+  const fs = require("fs"); \
+  const path = require("path"); \
+  const dir = "/app/client/dist/assets"; \
+  const files = fs.readdirSync(dir).filter(f => f.startsWith("index.") && f.endsWith(".js")); \
+  files.forEach(f => { \
+    const fp = path.join(dir, f); \
+    let c = fs.readFileSync(fp, "utf8"); \
+    const orig = "sandboxPermissions:\"allow-popups\""; \
+    const repl = "sandboxPermissions:\"allow-same-origin allow-popups\""; \
+    if (c.includes(orig)) { \
+      c = c.replace(orig, repl); \
+      fs.writeFileSync(fp, c); \
+      console.log("Patched:", fp); \
+    } else { \
+      console.log("Pattern not found (may already be patched):", fp); \
+    } \
+  }); \
+'
 
-# Create app directory
-RUN mkdir -p /app && chown node:node /app
-WORKDIR /app
+# Patch 3: MCP server fallback registration - show disconnected servers in UI
+# When a server fails to connect during startup, register it without inspection
+# so it still appears in the MCP list and users can manually reconnect.
+# Part A: Add addServerWithoutInspection method to MCPServersRegistry
+RUN node -e ' \
+  const fs = require("fs"); \
+  const f = "/app/packages/api/dist/index.js"; \
+  let c = fs.readFileSync(f, "utf8"); \
+  const marker = "updateServer(serverName, config, storageLocation, userId) {"; \
+  if (!c.includes("addServerWithoutInspection") && c.includes(marker)) { \
+    const method = [ \
+      "    addServerWithoutInspection(serverName, rawConfig) {", \
+      "        return __awaiter(this, void 0, void 0, function* () {", \
+      "            const minimalConfig = Object.assign({}, rawConfig);", \
+      "            yield this.cacheConfigsRepo.add(serverName, minimalConfig);", \
+      "        });", \
+      "    }", \
+      "    " \
+    ].join("\n"); \
+    c = c.replace(marker, method + marker); \
+    fs.writeFileSync(f, c); \
+    console.log("Patched: addServerWithoutInspection added"); \
+  } else { \
+    console.log("Skipped: addServerWithoutInspection (already patched or marker not found)"); \
+  } \
+'
 
-# Copy built application from builder
-COPY --from=builder --chown=node:node /app/package.json /app/package-lock.json ./
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/api ./api
-COPY --from=builder --chown=node:node /app/client/dist ./client/dist
-COPY --from=builder --chown=node:node /app/packages ./packages
-COPY --from=builder --chown=node:node /app/config ./config
-# Note: librechat.yaml is provided via Secret Manager volume mount in Cloud Run
-# (CONFIG_PATH=/secrets/config/librechat.yaml)
+# Part B: Add fallback logic in initializeServer catch block
+RUN node -e ' \
+  const fs = require("fs"); \
+  const f = "/app/packages/api/dist/index.js"; \
+  let c = fs.readFileSync(f, "utf8"); \
+  const orig = "catch (error) {\n                dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to initialize:`, error);\n            }"; \
+  const repl = "catch (error) {\n                dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to initialize:`, error);\n                try {\n                    yield MCPServersRegistry.getInstance().addServerWithoutInspection(serverName, rawConfig);\n                    dataSchemas.logger.info(`${MCPServersInitializer.prefix(serverName)} Registered as disconnected (no inspection).`);\n                }\n                catch (fallbackError) {\n                    dataSchemas.logger.error(`${MCPServersInitializer.prefix(serverName)} Failed to register fallback config:`, fallbackError);\n                }\n            }"; \
+  if (c.includes(orig)) { \
+    c = c.replace(orig, repl); \
+    fs.writeFileSync(f, c); \
+    console.log("Patched: initializeServer fallback added"); \
+  } else { \
+    console.log("Skipped: initializeServer fallback (already patched or pattern not found)"); \
+  } \
+'
 
-# Create necessary directories (Cloud Run uses in-memory storage)
+# =============================================================================
+# Directory Setup (Cloud Run uses in-memory storage)
+# =============================================================================
 RUN mkdir -p /app/client/public/images /app/logs /app/uploads && \
     chown -R node:node /app/client/public/images /app/logs /app/uploads
 
 # Switch to non-root user
 USER node
 
-# Cloud Run Configuration
-# -----------------------
-# PORT is automatically set by Cloud Run
-# HOST must be 0.0.0.0 to accept external connections
-
-ENV NODE_ENV=production
-ENV HOST=0.0.0.0
-# Prefer IPv4 for DNS resolution (Cloud Run compatibility)
-ENV NODE_OPTIONS="--dns-result-order=ipv4first"
-
-# Cloud Run uses PORT environment variable (default 8080)
-# The application reads PORT from environment
-ENV PORT=8080
-
-# Enable JSON logging for Cloud Logging integration
-ENV CONSOLE_JSON=true
-
 # Health check for Cloud Run
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:${PORT}/api/health || exit 1
 
-# Expose the port (Cloud Run uses PORT env var)
 EXPOSE 8080
 
-# Use tini as init process
+# Use tini as init process for proper signal handling
 ENTRYPOINT ["/sbin/tini", "--"]
-
-# Start the application
 CMD ["npm", "run", "backend"]
